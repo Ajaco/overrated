@@ -1,6 +1,5 @@
 import React from 'react'
 import {gql, graphql} from 'react-apollo'
-import '../App.css'
 
 const App = ({data: {loading, hello}}) => {
   return (

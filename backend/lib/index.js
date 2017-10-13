@@ -22,6 +22,6 @@ server.use(cors())
 server.use(koaBody())
 server.use(router.routes())
 
-const PORT = 3000
+const PORT = 3001
 
 server.listen(PORT)

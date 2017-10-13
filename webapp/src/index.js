@@ -1,7 +1,8 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-import './index.css'
 import {App} from './components'
+import './App.css'
+
 import {
   ApolloClient,
   ApolloProvider,
@@ -11,7 +12,7 @@ import registerServiceWorker from './registerServiceWorker'
 
 const client = new ApolloClient({
   networkInterface: createNetworkInterface({
-    uri: 'http://localhost:3000',
+    uri: 'http://localhost:3001',
   }),
 })
 
