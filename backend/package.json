@@ -1,0 +1,58 @@
+{
+  "name": "backend",
+  "version": "0.0.1",
+  "description": "overrated backend",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon lib/index.js --exec babel-node --presets env",
+    "build": "babel lib -d dist",
+    "serve": "node dist/index.js"
+  },
+  "author": "Ajaco",
+  "license": "ISC",
+  "dependencies": {
+    "apollo-server-koa": "^1.1.6",
+    "graphql": "^0.11.7",
+    "graphql-tools": "^2.5.0",
+    "koa": "^2.3.0",
+    "koa-bodyparser": "^4.2.0",
+    "koa-router": "^7.2.1"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-plugin-root-import": "^5.1.0",
+    "babel-plugin-transform-class-properties": "^6.24.1",
+    "babel-plugin-transform-export-extensions": "^6.22.0",
+    "babel-plugin-transform-object-rest-spread": "^6.26.0",
+    "babel-preset-env": "^1.6.0",
+    "bunyan": "^1.8.12",
+    "koa-cors": "0.0.16",
+    "nodemon": "^1.12.1"
+  },
+  "babel": {
+    "plugins": [
+      [
+        "babel-plugin-root-import",
+        {
+          "rootPathSuffix": "lib"
+        }
+      ],
+      "transform-object-rest-spread",
+      "transform-export-extensions",
+      "transform-class-properties"
+    ]
+  },
+  "presets": [
+    [
+      "env",
+      {
+        "targets": {
+          "node": "current"
+        },
+        "exclude": [
+          "transform-async-to-generator"
+        ]
+      }
+    ]
+  ]
+}
