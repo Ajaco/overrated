@@ -10,10 +10,27 @@ import {
 } from 'react-apollo'
 import registerServiceWorker from './registerServiceWorker'
 
+// http://dev.apollodata.com/react/auth.html#Header
+const networkInterface = createNetworkInterface({
+  uri: 'http://localhost:3001',
+})
+
+networkInterface.use([
+  {
+    applyMiddleware(req, next) {
+      if (!req.options.headers) {
+        req.options.headers = {} // Create the header object if needed.
+      }
+
+      const token = 'tokenGoesHere'
+      req.options.headers.authorization = token ? `Bearer ${token}` : null
+      next()
+    },
+  },
+])
+
 const client = new ApolloClient({
-  networkInterface: createNetworkInterface({
-    uri: 'http://localhost:3001',
-  }),
+  networkInterface,
 })
 
 ReactDOM.render(

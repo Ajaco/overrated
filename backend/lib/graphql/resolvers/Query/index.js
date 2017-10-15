@@ -1,5 +1,5 @@
-import hello from './hello'
+import users from './users'
 
 export default {
-  hello,
+  users,
 }

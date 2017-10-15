@@ -6,16 +6,35 @@ import {graphqlKoa, graphiqlKoa} from 'apollo-server-koa'
 import executableSchema from '~/graphql'
 
 const router = new koaRouter()
+
+//authorization:
+router.use('/', async (context, next) => {
+  const authHeader = context.request.get('authorization')
+
+  if (authHeader) {
+    const [tokenType, encodedToken] = authHeader.split(/\s+/)
+    if (tokenType !== 'Bearer') {
+      context.throw(401, `Unknown token type: ${tokenType}`)
+    }
+
+    context.state.token = authHeader
+  }
+
+  return next()
+})
+
 router.post(
   '/',
-  graphqlKoa(({state: {decodedToken: context}}) => ({
-    context,
-    schema: executableSchema,
-    formatError: error => {
-      config.logger.warn(error.message)
-      return error
-    },
-  }))
+  graphqlKoa(ctx => {
+    return {
+      context: ctx.state.token,
+      schema: executableSchema,
+      formatError: error => {
+        console.log(error.message)
+        return error
+      },
+    }
+  })
 )
 const server = new koa()
 server.use(cors())

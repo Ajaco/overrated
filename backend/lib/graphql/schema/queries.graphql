@@ -1,5 +1,19 @@
+type Address {
+  street: String
+  suite: String
+}
+
+type User {
+  id: ID!
+  name: String
+  username: String
+  email: String
+  address: Address
+}
+
 type Query {
-  hello: String
+  users: [User]
+  user(userId: ID!): User
 }
 
 schema {

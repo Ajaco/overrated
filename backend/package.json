@@ -25,7 +25,6 @@
     "babel-plugin-transform-export-extensions": "^6.22.0",
     "babel-plugin-transform-object-rest-spread": "^6.26.0",
     "babel-preset-env": "^1.6.0",
-    "bunyan": "^1.8.12",
     "koa-cors": "0.0.16",
     "nodemon": "^1.12.1"
   },
@@ -49,9 +48,7 @@
         "targets": {
           "node": "current"
         },
-        "exclude": [
-          "transform-async-to-generator"
-        ]
+        "exclude": ["transform-async-to-generator"]
       }
     ]
   ]
