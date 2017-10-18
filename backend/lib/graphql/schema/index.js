@@ -1,6 +1,6 @@
 import {readFileSync} from 'fs'
 
-const schemaFiles = ['queries']
+const schemaFiles = ['queries', 'mutations']
 
 const schema = schemaFiles.reduce(
   (res, file) =>

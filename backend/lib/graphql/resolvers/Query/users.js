@@ -1,4 +1,5 @@
+import fetch from 'node-fetch'
 export default async function(obj, args, context, info) {
-  console.log(context)
-  return [{id: '1', name: 'testing'}, {id: '2', name: 'bar'}]
+  const users = await fetch('https://jsonplaceholder.typicode.com/users')
+  return await users.json()
 }

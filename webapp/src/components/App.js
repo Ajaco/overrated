@@ -1,26 +1,21 @@
 import React from 'react'
-import {gql, graphql} from 'react-apollo'
+import {Redirect, Route, Switch} from 'react-router-dom'
+import User from './User'
+import Users from './Users'
 
-const App = ({data: {loading, users}}) => {
-  if (loading) return <div>LOADING!</div>
-
-  console.log(users)
+const App = () => {
   return (
     <div className="App">
       <header className="App-header">
         <h1 className="App-title">Welcome to React</h1>
       </header>
-      <p className="App-intro">Data from gql {users[0].name}</p>
+      <Switch>
+        <Route path="/users" component={Users} />
+        <Route path="/user/:userId" component={User} />
+        <Redirect to="/users" />
+      </Switch>
     </div>
   )
 }
 
-const query = gql`
-  query {
-    users {
-      id
-      name
-    }
-  }
-`
-export default graphql(query)(App)
+export default App

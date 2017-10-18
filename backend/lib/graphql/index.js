@@ -5,7 +5,7 @@ import * as resolvers from './resolvers' // http://dev.apollodata.com/tools/grap
 
 const executableSchema = makeExecutableSchema({
   typeDefs: schema,
-  resolvers: resolvers,
+  resolvers: {...resolvers},
 })
 
 export default executableSchema
