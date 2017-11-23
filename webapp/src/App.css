@@ -22,6 +22,7 @@ body {
 
 .App-title {
   font-size: 1.5em;
+  color: white;
 }
 
 .App-intro {
@@ -35,4 +36,13 @@ body {
   to {
     transform: rotate(360deg);
   }
+}
+
+.container {
+  padding: 25px;
+  width: 1200px;
+  margin: 0 auto;
+  flex: 1;
+  height: 100%;
+  overflow: hidden;
 }

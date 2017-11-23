@@ -12,6 +12,7 @@
   "license": "ISC",
   "dependencies": {
     "apollo-server-koa": "^1.1.6",
+    "aws-sdk": "^2.156.0",
     "graphql": "^0.11.7",
     "graphql-tools": "^2.5.0",
     "koa": "^2.3.0",
