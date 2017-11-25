@@ -1,0 +1,14 @@
+{
+  "presets": [
+    [
+      "env",
+      {
+        "targets": {
+          "node": "current"
+        },
+        "exclude": ["transform-async-to-generator"]
+      }
+    ]
+  ],
+  "plugins": ["transform-async-to-generator"]
+}

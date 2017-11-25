@@ -1,50 +1,17 @@
 import koa from 'koa'
 import koaRouter from 'koa-router'
 import koaBody from 'koa-bodyparser'
-import cors from 'koa-cors'
-import {graphqlKoa, graphiqlKoa} from 'apollo-server-koa'
-import executableSchema from '~/graphql'
+import cors from 'kcors'
 import AWS from 'aws-sdk'
 import awsConfig from '../aws-config'
 
 AWS.config.update(awsConfig)
+
 const router = new koaRouter()
-
-//authorization:
-router.use('/', async (context, next) => {
-  const authHeader = context.request.get('authorization')
-
-  if (authHeader) {
-    const [tokenType, encodedToken] = authHeader.split(/\s+/)
-    if (tokenType !== 'Bearer') {
-      context.throw(401, `Unknown token type: ${tokenType}`)
-    }
-
-    context.state.token = authHeader
-  }
-
-  return next()
-})
-
-router.post(
-  '/',
-  graphqlKoa(ctx => {
-    return {
-      context: ctx.state.token,
-      schema: executableSchema,
-      formatError: error => {
-        console.log(error.message)
-        return error
-      },
-    }
-  })
-)
 
 router.post('/result', async ({request: {body: match}}, next) => {
   const s3 = new AWS.S3()
-  const {Body} = await s3
-    .getObject({Bucket: 'overrated', Key: `${match.user}.json`})
-    .promise()
+  const {Body} = await s3.getObject({Bucket: 'overrated', Key: `${match.user}.json`}).promise()
 
   const matchHistory = JSON.parse(new Buffer(Body).toString('utf8'))
   matchHistory.push(match)
@@ -59,6 +26,7 @@ router.post('/result', async ({request: {body: match}}, next) => {
     .promise()
   return
 })
+
 const server = new koa()
 server.use(cors())
 server.use(koaBody())
@@ -67,3 +35,4 @@ server.use(router.routes())
 const PORT = 8080
 
 server.listen(PORT)
+console.log('Listening on port 8080...')
