@@ -22,7 +22,7 @@ router.post('/result', async (ctx, next) => {
 
   const {Body} = await s3.getObject({Bucket: 'overrated', Key: `${match.user}.json`}).promise()
   const matchHistory = JSON.parse(new Buffer(Body).toString('utf8'))
-  // matchHistory.push(match)
+  matchHistory.push(match)
   await s3
     .upload({
       ACL: 'public-read',
@@ -34,6 +34,7 @@ router.post('/result', async (ctx, next) => {
     .promise()
   ctx.body = JSON.stringify(match)
   ctx.type = 'application/json'
+  console.log(`Successfully updated match history for player ${match.user}`)
 })
 
 const server = new koa()
