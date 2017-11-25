@@ -1,8 +1,30 @@
 import React, {Component} from 'react'
 import Table from 'antd/lib/table'
 import Badge from 'antd/lib/badge'
+import styled, {css} from 'styled-components'
 import moment from 'moment'
 import 'moment/locale/nb'
+
+const Arrow = styled.i`
+  border: solid black;
+  border-width: 0 1px 1px 0;
+  display: inline-block;
+  padding: 3px;
+  margin-left: 8px;
+
+  ${props =>
+    props.win
+      ? css`
+          transform: rotate(-135deg);
+          -webkit-transform: rotate(-135deg);
+          border-color: #00a854;
+        `
+      : css`
+          transform: rotate(45deg);
+          -webkit-transform: rotate(45deg);
+          border-color: #f04134;
+        `};
+`
 
 const MATCH_STATUS = {
   Victory: 'success',
@@ -13,16 +35,17 @@ const MATCH_STATUS = {
 class Rating extends Component {
   state = {
     games: [],
+    loading: false,
   }
 
   async componentDidMount() {
-    const response = await fetch(
-      `https://s3.eu-west-2.amazonaws.com/overrated/${this.props.match.params
-        .userId}.json`
-    )
-    const data = await response.json()
-    this.setState({games: data})
-    console.log(this.state.games)
+    this.setState({loading: true})
+    const response = await fetch(`https://s3.eu-west-2.amazonaws.com/overrated/${this.props.match.params.userId}.json`)
+    if (response.status === 200) {
+      const data = await response.json()
+      this.setState({games: data.reverse()})
+    }
+    this.setState({loading: false})
   }
 
   columns = [
@@ -42,24 +65,26 @@ class Rating extends Component {
       title: 'Match completed',
       dataIndex: 'game.completedAt',
       key: 'completedAt',
-      render: completedAt => (
-        <span>{moment(completedAt).format('hh:mm DD.MM.YYYY')}</span>
-      ),
-      sortOrder: 'descend',
-      sorter: (a, b) =>
-        new Date(a.game.completedAt) > new Date(b.game.completedAt),
+      render: completedAt => <span>{moment(completedAt).format('HH:mm DD.MM.YYYY')}</span>,
+      sorter: (a, b) => new Date(b.game.completedAt) - new Date(a.game.completedAt),
     },
-    {title: 'SR', dataIndex: 'sr', key: 'sr'},
+    {
+      title: 'SR',
+      key: 'sr',
+      render: ({sr, game: {result}}) => (
+        <span>
+          {sr} {result !== 'Draw' && <Arrow win={result === 'Victory'} />}
+        </span>
+      ),
+    },
   ]
   render() {
     return (
-      <div class="container">
-        <h1 style={{textAlign: 'left', marginBottom: 15}}>
-          Match history for {this.props.match.params.userId}
-        </h1>
+      <div className="container">
+        <h1 style={{textAlign: 'left', marginBottom: 15}}>Match history for {this.props.match.params.userId}</h1>
         <Table
-          rowKey="game.id"
-          loading={this.state.games.length === 0}
+          rowKey={r => r.game.id}
+          loading={this.state.loading}
           dataSource={this.state.games}
           columns={this.columns}
         />
