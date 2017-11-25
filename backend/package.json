@@ -7,6 +7,11 @@
   "author": "Ajaco",
   "license": "MIT",
   "private": true,
+  "scripts": {
+    "dev": "babel-watch lib/index.js",
+    "build": "babel lib -d dist",
+    "serve": "node dist/index.js"
+  },
   "dependencies": {
     "aws-sdk": "^2.156.0",
     "kcors": "^2.2.1",

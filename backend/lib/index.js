@@ -9,12 +9,20 @@ AWS.config.update(awsConfig)
 
 const router = new koaRouter()
 
-router.post('/result', async ({request: {body: match}}, next) => {
+router.post('/result', async (ctx, next) => {
+  const {request: {body: match}} = ctx
   const s3 = new AWS.S3()
-  const {Body} = await s3.getObject({Bucket: 'overrated', Key: `${match.user}.json`}).promise()
+  try {
+    await s3.headObject({Bucket: 'overrated', Key: `${match.user}.json`}).promise()
+  } catch (ex) {
+    ctx.body = 'Could not find user in the system'
+    ctx.status = 404
+    return
+  }
 
+  const {Body} = await s3.getObject({Bucket: 'overrated', Key: `${match.user}.json`}).promise()
   const matchHistory = JSON.parse(new Buffer(Body).toString('utf8'))
-  matchHistory.push(match)
+  // matchHistory.push(match)
   await s3
     .upload({
       ACL: 'public-read',
@@ -24,7 +32,8 @@ router.post('/result', async ({request: {body: match}}, next) => {
       Body: JSON.stringify(matchHistory),
     })
     .promise()
-  return
+  ctx.body = JSON.stringify(match)
+  ctx.type = 'application/json'
 })
 
 const server = new koa()
