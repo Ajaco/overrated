@@ -4,6 +4,7 @@ import Badge from 'antd/lib/badge'
 import styled, {css} from 'styled-components'
 import moment from 'moment'
 import 'moment/locale/nb'
+import Sr from './Sr'
 
 const Arrow = styled.i`
   border: solid black;
@@ -82,6 +83,7 @@ class Rating extends Component {
     return (
       <div className="container">
         <h1 style={{textAlign: 'left', marginBottom: 15}}>Match history for {this.props.match.params.userId}</h1>
+        <Sr matches={this.state.games} />
         <Table
           rowKey={r => r.game.id}
           loading={this.state.loading}
