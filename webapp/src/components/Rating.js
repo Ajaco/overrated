@@ -2,30 +2,11 @@ import React, {Component} from 'react'
 import Table from 'antd/lib/table'
 import Badge from 'antd/lib/badge'
 import styled, {css} from 'styled-components'
-import moment from 'moment'
-import 'moment/locale/nb'
 import Sr from './Sr'
+import SRTooltip from './SRTooltip'
+import Statistics from './Statistics'
 
-const Arrow = styled.i`
-  border: solid black;
-  border-width: 0 1px 1px 0;
-  display: inline-block;
-  padding: 3px;
-  margin-left: 8px;
-
-  ${props =>
-    props.win
-      ? css`
-          transform: rotate(-135deg);
-          -webkit-transform: rotate(-135deg);
-          border-color: #00a854;
-        `
-      : css`
-          transform: rotate(45deg);
-          -webkit-transform: rotate(45deg);
-          border-color: #f04134;
-        `};
-`
+import calculateTimeAgo from '../lib/calculateTimeAgo'
 
 const MATCH_STATUS = {
   Victory: 'success',
@@ -33,10 +14,19 @@ const MATCH_STATUS = {
   Draw: 'warning',
 }
 
+const isUnexpectedSRChange = (change, result) => {
+  if (change > 0 && result === 'Victory') return false
+  if (change < 0 && result === 'Defeat') return false
+  if (change === 0 && result === 'Draw') return false
+
+  return true
+}
+
 class Rating extends Component {
   state = {
     games: [],
     loading: false,
+    currentPage: 0,
   }
 
   async componentDidMount() {
@@ -51,6 +41,7 @@ class Rating extends Component {
 
   columns = [
     {
+      width: 100,
       title: 'Result',
       dataIndex: 'game.result',
       key: 'result',
@@ -61,30 +52,55 @@ class Rating extends Component {
       ),
     },
     {title: 'Map', dataIndex: 'game.map', key: 'map'},
-    {title: 'Duration', dataIndex: 'game.duration', key: 'duration'},
+    {title: 'Duration', dataIndex: 'game.duration', key: 'duration', width: 100, align: 'right'},
     {
       title: 'Match completed',
       dataIndex: 'game.completedAt',
       key: 'completedAt',
-      render: completedAt => <span>{moment(completedAt).format('HH:mm DD.MM.YYYY')}</span>,
-      sorter: (a, b) => new Date(b.game.completedAt) - new Date(a.game.completedAt),
+      align: 'right',
+      render: completedAt => <span>{calculateTimeAgo(completedAt)}</span>,
+      width: 120,
     },
     {
+      align: 'right',
+      fixed: 'right',
+      width: 150,
       title: 'SR',
       key: 'sr',
-      render: ({sr, game: {result}}) => (
-        <span>
-          {sr} {result !== 'Draw' && <Arrow win={result === 'Victory'} />}
-        </span>
-      ),
+      render: ({sr, game: {result}}, _, index) => {
+        const actualIndex = 10 * this.state.currentPage + index
+        const change =
+          actualIndex === this.state.games.length - 1
+            ? 0
+            : this.state.games[actualIndex].sr - this.state.games[actualIndex + 1].sr
+        return (
+          <span
+            style={{
+              color: change > 0 ? '#00a854' : '#f04134',
+            }}
+          >
+            {sr}
+            <span style={{marginLeft: 10}}>
+              ({change > 0 ? '+' : ''}
+              {change})
+            </span>
+            {isUnexpectedSRChange(change, result) && <SRTooltip change={change} result={result} />}
+          </span>
+        )
+      },
     },
   ]
+
   render() {
     return (
       <div className="container">
-        <h1 style={{textAlign: 'left', marginBottom: 15}}>Match history for {this.props.match.params.userId}</h1>
+        <div style={{fontSize: 30, fontWeight: 'light', textAlign: 'left', marginBottom: 15}}>
+          {this.props.match.params.userId.toUpperCase()}
+        </div>
+        <Statistics matches={this.state.games} />
         <Sr matches={this.state.games} />
         <Table
+          onChange={({current}) => this.setState({currentPage: current - 1})}
           rowKey={r => r.game.id}
           loading={this.state.loading}
           dataSource={this.state.games}

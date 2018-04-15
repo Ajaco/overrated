@@ -8,9 +8,6 @@ const App = () => {
   return (
     <LocaleProvider locale={enUS}>
       <div className="App">
-        <header className="App-header">
-          <h1 className="App-title">Welcome to Overrated</h1>
-        </header>
         <Switch>
           <Route path="/:userId" component={Rating} />
         </Switch>

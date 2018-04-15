@@ -10,21 +10,18 @@ const Sr = ({matches}) => {
     {
       id: 'sr',
       data: mappedMatches,
-      color: 'hsl(299, 70%, 50%)',
+      color: 'hsla(207, 6%, 28%, 1)',
     },
   ]
 
-  console.log(data)
-
   return (
     <div>
-      <h2>SR change last 20 matches:</h2>
       <Line
         data={data}
         width={1185}
         height={350}
         margin={{
-          top: 40,
+          top: 10,
           right: 40,
           bottom: 40,
           left: 40,
@@ -32,7 +29,7 @@ const Sr = ({matches}) => {
         minY="auto"
         maxY="auto"
         stacked={false}
-        curve="monotoneX"
+        curve="monotoneY"
         axisLeft={{
           orient: 'left',
           tickSize: 5,
